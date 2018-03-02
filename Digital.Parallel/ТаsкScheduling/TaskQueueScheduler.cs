@@ -29,14 +29,18 @@ namespace Digital.Parallel.ТаsкScheduling
 
         public TaskScheduler GetSchedulerFor(Priority priority)
         {
-            return _schedulers[priority];
+            PriorityTaskScheduler scheduler;
+            if (!_schedulers.TryGetValue(priority, out scheduler))
+                throw new NotSupportedException($"Unknown priority {priority}");
+
+            return scheduler;
         }
 
         public void Stop()
         {
             _cancallation.Cancel();
 
-            Task.WaitAll(_taskQueue.ToArray().Select(t => t.Task).ToArray());
+            Task.WaitAll(GetScheduledTasks().ToArray());
         }
 
         public bool IsStopping()
@@ -46,7 +50,7 @@ namespace Digital.Parallel.ТаsкScheduling
 
         protected override IEnumerable<Task> GetScheduledTasks()
         {
-            throw new NotImplementedException();
+            return _taskQueue.ToArray().Select(t => t.Task);
         }
 
         protected override void QueueTask(Task task)
@@ -61,7 +65,7 @@ namespace Digital.Parallel.ТаsкScheduling
 
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         private void ExecuteQueuedTasks()
@@ -96,7 +100,7 @@ namespace Digital.Parallel.ТаsкScheduling
 
             protected override IEnumerable<Task> GetScheduledTasks()
             {
-                return new Task[0];
+                return _parentScheduler.GetScheduledTasks();
             }
 
             protected override void QueueTask(Task task)

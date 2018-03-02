@@ -13,7 +13,7 @@ namespace Digital.Parallel.Example
 
         static void Main(string[] args)
         {
-            var threadPool = new FixedThreadPool(2);
+            var threadPool = new FixedThreadPool(3);
 
             StartTasks(threadPool, Priority.LOW, 20);
             StartTasks(threadPool, Priority.HIGH, 20);
@@ -32,8 +32,7 @@ namespace Digital.Parallel.Example
                 threadPool.Execute(new ActionTask(
                     () =>
                     {
-                        //Console.WriteLine($"Task with priority {priority} number {ind} is started...");
-                        var delay = 0.5;// _random.Next(3000) / 1000.0;
+                        var delay =  _random.Next(1000) / 1000.0;
                         Thread.Sleep(TimeSpan.FromSeconds(delay));
                         Console.WriteLine($"Task with priority {priority} number {ind} fromy thread Id = {Thread.CurrentThread.ManagedThreadId}, complexity = {delay}");
                     }),

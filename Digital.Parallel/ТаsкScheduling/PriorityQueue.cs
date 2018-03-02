@@ -21,7 +21,12 @@ namespace Digital.Parallel.ТаsкScheduling
         public void Enqueue(T task, Priority priority)
         {
             if (task == null) throw new ArgumentNullException(nameof(task));
-            _queues[priority].Enqueue(task);
+
+            ConcurrentQueue<T> queue;
+            if (!_queues.TryGetValue(priority, out queue))
+                throw new NotSupportedException($"Unknown priority {priority}");
+
+            queue.Enqueue(task);
         }
 
         public bool TryDequeue(out T task)
@@ -64,13 +69,10 @@ namespace Digital.Parallel.ТаsкScheduling
 
         public T[] ToArray()
         {
-            lock(_lock)
-            {
-                return _queues
-                    .Values
-                    .SelectMany(q => q.ToArray())
-                    .ToArray();
-            }
+            return _queues
+                .Values
+                .SelectMany(q => q.ToArray())
+                .ToArray();
         }
 
         private bool TryDequeue(out T task, out Priority priority, params Priority[] priorityOrder)
