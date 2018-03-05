@@ -29,18 +29,17 @@ namespace Digital.Parallel.ТаsкScheduling
 
         public TaskScheduler GetSchedulerFor(Priority priority)
         {
-            PriorityTaskScheduler scheduler;
-            if (!_schedulers.TryGetValue(priority, out scheduler))
+            if (!_schedulers.TryGetValue(priority, out PriorityTaskScheduler scheduler))
                 throw new NotSupportedException($"Unknown priority {priority}");
 
             return scheduler;
         }
 
-        public void Stop()
+        public async Task Stop()
         {
             _cancallation.Cancel();
 
-            Task.WaitAll(GetScheduledTasks().ToArray());
+            await Task.WhenAll(GetScheduledTasks().ToArray());
         }
 
         public bool IsStopping()

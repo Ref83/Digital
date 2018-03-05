@@ -6,9 +6,6 @@ namespace Digital.Parallel
 {
     public class FixedThreadPool
     {
-        private static readonly Task<bool> TrueResult = Task.FromResult<bool>(true);
-        private static readonly Task<bool> FalseResult = Task.FromResult<bool>(false);
-
         private readonly TaskQueueScheduler _scheduler;
         
         public FixedThreadPool(int concurrencyLevel)
@@ -16,19 +13,19 @@ namespace Digital.Parallel
             _scheduler = new TaskQueueScheduler(concurrencyLevel);
         }
 
-        public async Task<bool> Execute(ITask task, Priority priority)
+        public bool Execute(ITask task, Priority priority)
         {
             if (_scheduler.IsStopping())
-                return await FalseResult;
+                return false;
 
             Task.Factory.StartNew(() => task.Execute(), CancellationToken.None, TaskCreationOptions.None, _scheduler.GetSchedulerFor(priority));
 
-            return await TrueResult;
+            return true;
         }
 
         public async Task Stop()
         {
-            await Task.Run(() => _scheduler.Stop());            
+            await _scheduler.Stop();
         }
     }
 }

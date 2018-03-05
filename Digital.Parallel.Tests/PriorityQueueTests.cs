@@ -161,6 +161,59 @@ namespace Digital.Parallel.Tests
                 "normal_3");
         }
 
+        [Fact]
+        public void ToArray_Returns_All_Queued_Items()
+        {
+            var queue = new PriorityQueue<string>();
+
+            queue.Enqueue("low", Priority.LOW);
+            queue.Enqueue("high", Priority.HIGH);
+            queue.Enqueue("normal", Priority.NORMAL);
+
+            var result = queue.ToArray();
+
+            result.Should().Equal(
+                "high",
+                "normal",
+                "low");
+        }
+
+        [Fact]
+        public void ToArray_Returns_All_Queued_Items_Ever_Partly_Dequeued()
+        {
+            var queue = new PriorityQueue<string>();
+
+            queue.Enqueue("low", Priority.LOW);
+            queue.Enqueue("high", Priority.HIGH);
+            queue.Enqueue("normal", Priority.NORMAL);
+
+            queue.TryDequeue(out string item);
+
+            var result = queue.ToArray();
+
+            result.Should().Equal(
+                "normal",
+                "low");
+        }
+
+        [Fact]
+        public void ToArray_Saves_Priority_Order_For_Normal_Items_Dequeued()
+        {
+            var queue = new PriorityQueue<string>();
+
+            Times(ind => queue.Enqueue($"high_{ind}", Priority.HIGH), 6);
+            Times(_ => queue.TryDequeue(out string item), 4);
+            queue.Enqueue("normal", Priority.NORMAL);
+
+            var result = queue.ToArray();
+
+            result.Should().Equal(
+                "high_4",
+                "normal",
+                "high_5"
+                );
+        }
+
         private void Times(Action<int> action, int times)
         {
             times.Should().BeGreaterOrEqualTo(1);
