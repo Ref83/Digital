@@ -1,4 +1,4 @@
-﻿using Digital.Parallel.ТаsкScheduling;
+﻿using Digital.Parallel.ТаskScheduling;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

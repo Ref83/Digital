@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Digital.Parallel.ТаsкScheduling
+namespace Digital.Parallel.ТаskScheduling
 {
     public class PriorityQueue<T>
     {

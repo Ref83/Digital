@@ -1,4 +1,4 @@
-﻿using Digital.Parallel.ТаsкScheduling;
+﻿using Digital.Parallel.ТаskScheduling;
 using System.Threading;
 using System.Threading.Tasks;
 
